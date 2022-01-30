@@ -1,14 +1,22 @@
 import React from "react";
 import "./style.css";
+import Die from "./Die";
+import Confetti from "react-confetti";
 
 export default function App() {
-  const [numbers, setNumbers] = React.useState([]);
+  const [numbers, setNumbers] = React.useState(() => {
+    const newArr = [];
+    for (let i = 0; i < 10; i++)
+      newArr.push({ num: Math.trunc(Math.random() * 6), isSelected: false });
+    return newArr;
+  });
+  const [isWinTheGame, setIsWinTheGame] = React.useState(false);
 
   React.useEffect(() => {
     setNumbers(() => {
       const newArr = [];
       for (let i = 0; i < 10; i++)
-        newArr.push({ num: Math.trunc(Math.random() * 10), selected: false });
+        newArr.push({ num: Math.trunc(Math.random() * 6), isSelected: false });
       return newArr;
     });
   }, []);
@@ -16,17 +24,39 @@ export default function App() {
   function isWin() {
     let isMatch = true;
     numbers.reduce((prev, curr) => {
-      if (prev.num !== curr.num) {
-        isMatch = false;
-      }
+      if (!prev.isSelected || !curr.isSelected) isMatch = false;
       return curr;
     });
-    return isMatch;
+    return new Set(numbers.map((e) => e.num)).size === 1 && isMatch;
+  }
+
+  React.useEffect(() => {
+    if (isWin()) document.querySelector(".roll-btn").textContent = "Reset Game";
+    setIsWinTheGame(isWin());
+  }, [numbers]);
+
+  function select(id) {
+    setNumbers((prevNumbers) =>
+      prevNumbers.map((e, index) =>
+        index === id ? { ...e, isSelected: !e.isSelected } : e
+      )
+    );
   }
 
   return (
     <main className="main-app">
       <div className="app-title">
+        {isWinTheGame && (
+          <Confetti
+            height="370"
+            width="360"
+            style={{
+              margin: "0 auto",
+              transform: "translateY(51%)",
+            }}
+          />
+        )}
+
         <h1 className="app-name">Tenzies</h1>
         <p className="app-info">
           Roll until all dice are the same. Click <br /> each die to freeze it
@@ -34,30 +64,16 @@ export default function App() {
         </p>
       </div>
       <div className="app-body">
-        {numbers.map((e, index) => (
-          <span
-            className="num"
-            key={index + 1}
-            style={{
-              backgroundColor: e.selected ? "#59e391" : "#fff",
-            }}
-            onClick={(event) => {
-              event.target.classList.toggle("active");
-
-              setNumbers((prevNumbers) =>
-                prevNumbers.map((el, index2) =>
-                  index === index2 ? { ...el, selected: !e.selected } : el
-                )
-              );
-              if (isWin()) {
-                console.log("You win!");
-                document.querySelector(".roll-btn").textContent = "Reset Game";
-              }
-            }}
-          >
-            {e.num}
-          </span>
-        ))}
+        {numbers.map((e, index) => {
+          return (
+            <Die
+              value={e.num}
+              key={index + 1}
+              isSelected={e.isSelected}
+              select={() => select(index)}
+            />
+          );
+        })}
       </div>
       <button
         className="roll-btn"
@@ -65,9 +81,9 @@ export default function App() {
           if (event.target.textContent === "Roll") {
             setNumbers((prevNumbers) => {
               return prevNumbers.map((e) => {
-                return e.selected
+                return e.isSelected
                   ? e
-                  : { ...e, num: Math.trunc(Math.random() * 10) };
+                  : { ...e, num: Math.trunc(Math.random() * 6) };
               });
             });
           } else {
@@ -75,8 +91,8 @@ export default function App() {
               const newArr = [];
               for (let i = 0; i < 10; i++)
                 newArr.push({
-                  num: Math.trunc(Math.random() * 10),
-                  selected: false,
+                  num: Math.trunc(Math.random() * 6),
+                  isSelected: false,
                 });
               return newArr;
             });
