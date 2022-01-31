@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/Tenzies-App/static/css/main.94857a22.css",
-    "main.js": "/Tenzies-App/static/js/main.16197813.js",
+    "main.js": "/Tenzies-App/static/js/main.b7e1006b.js",
     "index.html": "/Tenzies-App/index.html",
     "main.94857a22.css.map": "/Tenzies-App/static/css/main.94857a22.css.map",
-    "main.16197813.js.map": "/Tenzies-App/static/js/main.16197813.js.map"
+    "main.b7e1006b.js.map": "/Tenzies-App/static/js/main.b7e1006b.js.map"
   },
   "entrypoints": [
     "static/css/main.94857a22.css",
-    "static/js/main.16197813.js"
+    "static/js/main.b7e1006b.js"
   ]
 }
